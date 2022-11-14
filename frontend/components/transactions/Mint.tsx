@@ -19,8 +19,8 @@ export function PurchaseTokens() {
   const handleShow = () => setShow(true);
   
   const [amountToMint, setAmountToMint] = useState(0);
-  const addAmount = () => setAmountToMint(amountToMint + 1);
-  const subtractAmount = () => {
+  const addAmount = async () => setAmountToMint(amountToMint + 1);
+  const subtractAmount = async () => {
     if (amountToMint > 0){
       setAmountToMint(amountToMint - 1)
       }
@@ -32,14 +32,18 @@ export function PurchaseTokens() {
       },
     });
 
-  const debouncedAmount = useDebounce((amountToMint/10).toString(), 500);
+    const debouncedAmount = useDebounce((amountToMint/10).toString(), 500);
+
+  
   const optiMemeContractAddress: string = process.env.NEXT_PUBLIC_OPTI_MEME_ADDRESS as string;
 
   const { config } = usePrepareContractWrite({
     address: optiMemeContractAddress,
     abi: OptiMeme.abi,
     functionName: 'mint',
-    args: [address,  1, amountToMint, '0x']
+    args: [address,  1, debouncedAmount, '0x'],
+    enabled: Boolean(debouncedAmount),
+    
     
   });
   const { data, write } = useContractWrite(config);
@@ -82,7 +86,7 @@ export function PurchaseTokens() {
 
         </Modal.Body>
           <Modal.Footer  className='padding-bottom-btn'>
-          <button className='btn btn-light ' disabled={!write || isLoading} onClick={() => {if(write){write()}}}>
+          <button className='btn btn-lg btn-light fw-bold custombtn ' disabled={!write || isLoading} onClick={() => {if(write){write()}}}>
           {isLoading ? 'Processing Purchase...' : 'Mint Now'}
         </button>
         {isSuccess && (
