@@ -32,7 +32,7 @@ export function PurchaseTokens() {
       },
     });
 
-    const debouncedAmount = useDebounce((amountToMint/10).toString(), 500);
+  const debouncedAmount = useDebounce(amountToMint, 100);
 
   
   const optiMemeContractAddress: string = process.env.NEXT_PUBLIC_OPTI_MEME_ADDRESS as string;
@@ -41,8 +41,7 @@ export function PurchaseTokens() {
     address: optiMemeContractAddress,
     abi: OptiMeme.abi,
     functionName: 'mint',
-    args: [address,  1, debouncedAmount, '0x'],
-    enabled: Boolean(debouncedAmount),
+    args: [address,  1, amountToMint, '0x'],
     
     
   });
